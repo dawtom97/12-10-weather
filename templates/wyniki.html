@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wyniki — {{ city }} | Pogodnik</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="logo">
+            <span class="logo-icon">☀️</span>
+            <span>Pogodnik<span class="logo-dot">.</span></span>
+        </a>
+
+        <div class="navbar-right">
+            <span class="navbar-label">Panel pogodowy</span>
+            <a href="{{ url_for('wyszukaj') }}" class="nav-link">
+                + Nowe wyszukiwanie
+            </a>
+        </div>
+    </nav>
+
+    <main class="results-main">
+
+        <!-- Nagłówek strony -->
+
+        <section class="results-heading">
+            <div class="eyebrow">
+                <span class="status-dot"></span>
+                Dane pogodowe
+            </div>
+
+            <h1>
+                Pogoda w mieście<br>
+                <span>{{ city }}</span>
+            </h1>
+
+            <p class="description">
+                Aktualne warunki atmosferyczne i historia zapisanych pomiarów
+                w jednym miejscu.
+            </p>
+        </section>
+
+        <!-- Aktualna pogoda -->
+
+        <section class="weather-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Aktualna pogoda</h2>
+                    <p>Ostatni dostępny pomiar dla lokalizacji</p>
+                </div>
+
+                <span class="section-tag">Ostatni odczyt</span>
+            </div>
+
+            <div class="weather-grid">
+
+                <article class="weather-card weather-card-main">
+                    <div class="weather-card-top">
+                        <span class="weather-label">Temperatura</span>
+                        <span class="weather-icon">🌡️</span>
+                    </div>
+
+                    <div class="weather-value">
+                        {{ latest.temp if latest and latest.temp is not none else '—' }}<span>°C</span>
+                    </div>
+
+                    <p class="weather-description">
+                        Aktualna temperatura powietrza
+                    </p>
+                </article>
+
+                <article class="weather-card">
+                    <div class="weather-card-top">
+                        <span class="weather-label">Temperatura odczuwalna</span>
+                        <span class="weather-icon">🌤️</span>
+                    </div>
+
+                    <div class="weather-value">
+                        {{ latest.feels_like if latest and latest.feels_like is not none else '—' }}<span>°C</span>
+                    </div>
+
+                    <p class="weather-description">
+                        Jak temperatura jest odczuwana
+                    </p>
+                </article>
+
+                <article class="weather-card">
+                    <div class="weather-card-top">
+                        <span class="weather-label">Prędkość wiatru</span>
+                        <span class="weather-icon">💨</span>
+                    </div>
+
+                    <div class="weather-value">
+                        {{ latest.wind if latest and latest.wind is not none else '—' }}
+                        <span class="weather-unit">m/s</span>
+                    </div>
+
+                    <p class="weather-description">
+                        Prędkość wiatru podczas pomiaru
+                    </p>
+                </article>
+
+                <article class="weather-card">
+                    <div class="weather-card-top">
+                        <span class="weather-label">Wschód słońca</span>
+                        <span class="weather-icon">🌅</span>
+                    </div>
+
+                    <div class="weather-value weather-time">
+                        {{ latest.sunrise if latest and latest.sunrise else '—' }}
+                    </div>
+
+                    <p class="weather-description">
+                        Godzina wschodu słońca
+                    </p>
+                </article>
+
+                <article class="weather-card">
+                    <div class="weather-card-top">
+                        <span class="weather-label">Zachód słońca</span>
+                        <span class="weather-icon">🌇</span>
+                    </div>
+
+                    <div class="weather-value weather-time">
+                        {{ latest.sunset if latest and latest.sunset else '—' }}
+                    </div>
+
+                    <p class="weather-description">
+                        Godzina zachodu słońca
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Historia pomiarów -->
+
+        <section class="history-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Historia pomiarów</h2>
+                    <p>Zapisane odczyty pogodowe dla dostępnej lokalizacji</p>
+                </div>
+
+                <span class="section-tag">
+                    {{ df|length }} rekordów
+                </span>
+            </div>
+
+            <div class="table-container">
+                <table class="weather-table">
+                    <thead>
+                        <tr>
+                            <th>Miejsce</th>
+                            <th>Temperatura</th>
+                            <th>Odczuwalna</th>
+                            <th>Wiatr</th>
+                            <th>Data pomiaru</th>
+                            <th>Wschód słońca</th>
+                            <th>Zachód słońca</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for r in df %}
+                        <tr>
+                            <td>
+                                <span class="table-city">
+                                    <span class="city-dot"></span>
+                                    {{ r.place }}
+                                </span>
+                            </td>
+
+                            <td class="table-temperature">
+                                {% if r.temp is not none %}
+                                    {{ r.temp }} °C
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if r.feels_like is not none %}
+                                    {{ r.feels_like }} °C
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if r.wind is not none %}
+                                    {{ r.wind }} m/s
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td class="table-date">
+                                {{ r.timestamp if r.timestamp else '—' }}
+                            </td>
+
+                            <td>{{ r.sunrise if r.sunrise else '—' }}</td>
+                            <td>{{ r.sunset if r.sunset else '—' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <span class="empty-icon">☁️</span>
+                                <p>Brak zapisanych pomiarów.</p>
+                                <span>Wyszukaj miasto, aby pobrać dane pogodowe.</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Informacje o danych -->
+
+        <section class="data-info">
+            <div class="data-info-icon">ⓘ</div>
+
+            <div class="data-info-content">
+                <h2>Skąd pochodzą dane?</h2>
+
+                <p>
+                    Dane pogodowe pobierane są z serwisu
+                    <a href="https://openweathermap.org/"
+                       target="_blank"
+                       rel="noopener noreferrer">OpenWeather</a>,
+                    który udostępnia informacje o warunkach atmosferycznych
+                    dla różnych lokalizacji.
+                </p>
+
+                <p>
+                    Pobrane pomiary są następnie zapisywane w pliku XLSX,
+                    który pełni funkcję lokalnego archiwum danych.
+                    Aplikacja odczytuje zapisane rekordy i prezentuje je
+                    w postaci kart oraz tabeli, co ułatwia przeglądanie
+                    i porównywanie wyników.
+                </p>
+
+                <div class="data-flow">
+                    <div class="data-flow-item">
+                        <span>01</span>
+                        <strong>OpenWeather</strong>
+                        <small>Źródło danych</small>
+                    </div>
+
+                    <span class="data-flow-arrow">→</span>
+
+                    <div class="data-flow-item">
+                        <span>02</span>
+                        <strong>Plik XLSX</strong>
+                        <small>Zapis pomiarów</small>
+                    </div>
+
+                    <span class="data-flow-arrow">→</span>
+
+                    <div class="data-flow-item">
+                        <span>03</span>
+                        <strong>Pogodnik</strong>
+                        <small>Prezentacja wyników</small>
+                    </div>
+                </div>
+
+                <p class="data-disclaimer">
+                    Prezentowane wyniki zależą od dostępności danych
+                    źródłowych oraz ostatniego zapisu w archiwum.
+                </p>
+            </div>
+        </section>
+
+      <p class="refresh-note" id="refresh-status" role="status">Automatyczne sprawdzanie nowych odczytów co 15 sekund.</p>
+    </main>
+    <script>
+      let lastStamp = {{ (latest.timestamp if latest else '')|tojson }};
+      async function checkUpdates() {
+        try {
+          const response = await fetch({{ url_for('api_pomiary')|tojson }}, {cache: 'no-store'});
+          if (!response.ok) throw new Error('Błąd serwera');
+          const result = await response.json();
+          const stamp = result.latest ? String(result.latest.timestamp) : '';
+          if (stamp && stamp !== lastStamp) { window.location.reload(); return; }
+          document.getElementById('refresh-status').textContent = 'Dashboard jest aktualny. Sprawdzanie co 15 sekund.';
+        } catch (error) {
+          document.getElementById('refresh-status').textContent = 'Brak połączenia. Ponawiam sprawdzanie co 15 sekund.';
+        }
+      }
+      setInterval(checkUpdates, 15000);
+    </script>
+
+    <footer>
+        © {{ now.year if now is defined else 2026 }} Pogodnik.
+        Prosto. Przejrzyście. Pogodnie.
+    </footer>
+
+</body>
+</html>

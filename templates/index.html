@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pogodnik — Twoja pogoda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">☀️</span>
+            <span>Pogodnik<span class="logo-dot">.</span></span>
+        </div>
+
+        <div class="navbar-label">
+            Twoja pogoda w jednym miejscu
+        </div>
+    </nav>
+
+    <main>
+        <div class="eyebrow">
+            <span class="status-dot"></span>
+            Odkryj pogodę na nowo
+        </div>
+
+        <h1>
+            Pogoda, którą masz<br>
+            <span>pod kontrolą.</span>
+        </h1>
+
+        <p class="description">
+            Sprawdzaj warunki atmosferyczne, wyszukuj lokalizacje
+            i odkrywaj prognozy w jednym prostym miejscu.
+        </p>
+
+        <section class="tiles" aria-label="Funkcje aplikacji">
+
+            <a href="{{ url_for('wyszukaj') }}" class="tile">
+                <div class="tile-icon" aria-hidden="true">⌕</div>
+
+                <h2>Wyszukaj pogodę</h2>
+
+                <p>
+                    Znajdź dowolne miasto i sprawdź aktualne
+                    warunki pogodowe dla wybranej lokalizacji.
+                </p>
+
+                <div class="tile-footer">
+                    <span class="tile-action">
+                        Przejdź do wyszukiwania
+                    </span>
+                    <span class="arrow" aria-hidden="true">→</span>
+                </div>
+            </a>
+
+            <a href="{{ url_for('wyniki') }}" class="tile">
+                <div class="tile-icon" aria-hidden="true">◷</div>
+
+                <h2>Wyniki i prognozy</h2>
+
+                <p>
+                    Przejrzyj wyniki pomiarów oraz dostępne prognozy,
+                    aby lepiej zaplanować swój dzień.
+                </p>
+
+                <div class="tile-footer">
+                    <span class="tile-action">Zobacz wyniki</span>
+                    <span class="arrow" aria-hidden="true">→</span>
+                </div>
+            </a>
+
+        </section>
+    </main>
+
+    <footer>
+        © {{ now.year if now is defined else 2026 }} Pogodnik.
+        Prosto. Przejrzyście. Pogodnie.
+    </footer>
+
+</body>
+</html>

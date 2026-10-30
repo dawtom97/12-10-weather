@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wyszukaj pogodę | Pogodnik</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav class="navbar"><a class="logo" href="{{ url_for('index') }}">☀️ Pogodnik.</a><a class="nav-link" href="{{ url_for('wyniki') }}">Dashboard →</a></nav>
+  <main class="results-main">
+    <section class="results-heading"><div class="eyebrow">Sprawdź warunki pogodowe</div><h1>Wyszukaj <span>miasto</span></h1></section>
+    <section class="history-section">
+      <form method="post" class="search-form">
+        <label for="city">Nazwa miasta</label>
+        <input id="city" name="query" type="search" placeholder="np. Warszawa" required maxlength="100" value="{{ request.form.get('query', '') }}">
+        <button type="submit">Sprawdź pogodę</button>
+      </form>
+      {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+      {% if weather %}
+      <div class="search-result"><h2>{{ weather.place }}</h2><p>🌡️ Temperatura: <strong>{{ weather.temp }} °C</strong></p><p>🌤️ Odczuwalna: {{ weather.feels_like }} °C</p><p>💨 Wiatr: {{ weather.wind }} m/s</p><p>🌅 Wschód: {{ weather.sunrise }} · 🌇 Zachód: {{ weather.sunset }}</p></div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>
